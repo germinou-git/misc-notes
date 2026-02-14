@@ -95,7 +95,7 @@ So we just remove that line by overriding it with an empty ExecStop:
 
 `# systemctl edit systemd-cryptsetup@crypt_drive1.service`
 ```
-### Editing /etc/systemd/system/systemd-cryptsetup@crypt_kingston.service.d/override.conf
+### Editing /etc/systemd/system/systemd-cryptsetup@crypt_drive1.service.d/override.conf
 ### Anything between here and the comment below will become the contents of the drop-in file
 [Service]
 ExecStop=
