@@ -6,8 +6,8 @@ Edit zfs-import-scan.service
 /etc/systemd/system/zfs-import-scan.service.d/override.conf
 
 [Unit]
-After=systemd-cryptsetup@hdd1_crypt.service systemd-cryptsetup@hdd2_crypt.service
-Wants=systemd-cryptsetup@hdd1_crypt.service systemd-cryptsetup@hdd2_crypt.service
+#After=systemd-cryptsetup@hdd1_crypt.service systemd-cryptsetup@hdd2_crypt.service #seems redundant with the existing After=cryptsetup.target
+#Wants=systemd-cryptsetup@hdd1_crypt.service systemd-cryptsetup@hdd2_crypt.service
 Conflicts=shutdown.target
 Before=shutdown.target
 [Service]
