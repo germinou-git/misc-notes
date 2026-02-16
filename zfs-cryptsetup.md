@@ -1,10 +1,10 @@
 ## Solution A (much better)
 Thanks to [u/zavin4c](https://www.reddit.com/user/zavin4c/) for sharing this solution [here](https://www.reddit.com/r/zfs/comments/1qcwdd0/zfs_on_top_of_luks_unable_to_cleanly_close_luks/?utm_source=share&utm_medium=web3x&utm_name=web3xcss&utm_term=1&utm_content=share_button).
 
-`# systemctl edit zfs-import-scan.service`
+Edit zfs-import-scan.service
 ```
-### Editing /etc/systemd/system/zfs-import-scan.service.d/override.conf
-### Anything between here and the comment below will become the contents of the drop-in file
+/etc/systemd/system/zfs-import-scan.service.d/override.conf
+
 [Unit]
 After=systemd-cryptsetup@hdd1_crypt.service systemd-cryptsetup@hdd2_crypt.service
 Wants=systemd-cryptsetup@hdd1_crypt.service systemd-cryptsetup@hdd2_crypt.service
@@ -12,8 +12,22 @@ Conflicts=shutdown.target
 Before=shutdown.target
 [Service]
 ExecStop=-/usr/sbin/zpool export -a
-### Edits below this comment will be discarded
 ```
+### Note (when using ZFS's automounting feature)
+While this solution seemed to work as-is for a while, the (in my case) `home.mount` unit automatically created by systemd seems to create issues that are hard to reproduce. To fix this:
+
+Disable systemd's mounting/unmounting
+```
+# systemctl mask home.mount
+```
+Unmount via zfs
+```
+/etc/systemd/system/zfs-mount.service.d/override.conf
+
+[Service]
+ExecStop=/usr/bin/zfs unmount -a
+```
+I'm not sure whether I messed up with the configuration of ZFS or of systemd, or whether systemd and ZFS don't play nice with each other...
 
 ## Solution B (more complicated; keeping for the record)
 Please read the end of this post before you actually proceed, as you may want to start with steps 3 and 4.
