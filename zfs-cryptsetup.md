@@ -13,21 +13,15 @@ Before=shutdown.target
 [Service]
 ExecStop=-/usr/sbin/zpool export -a
 ```
-### Note (when using ZFS's automounting feature)
-While this solution seemed to work as-is for a while, the (in my case) `home.mount` unit automatically created by systemd seems to create issues that are hard to reproduce. To fix this:
+### Note
+Unmounting (e.g. of /home) starts after local-fs.target ("Local File Systems") has stopped and completes before local-fs-pre.target ("Preparation for Local File Systems") stops.
 
-Disable systemd's mounting/unmounting
+The following edit should ensure that ZFS attempts to unmount (and subsequently to export) *after* the relevant umounts have completed. It "corrects" the original `Before=local-fs.target`, which is a step too early.
 ```
-# systemctl mask home.mount
+# /etc/systemd/system/zfs-mount.service.d/override.conf
+[Unit]
+Before=local-fs-pre.target
 ```
-Unmount via zfs
-```
-/etc/systemd/system/zfs-mount.service.d/override.conf
-
-[Service]
-ExecStop=/usr/bin/zfs unmount -a
-```
-I'm not sure whether I messed up with the configuration of ZFS or of systemd, or whether systemd and ZFS don't play nice with each other...
 
 ## Solution B (more complicated; keeping for the record)
 Please read the end of this post before you actually proceed, as you may want to start with steps 3 and 4.
