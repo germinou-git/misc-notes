@@ -13,7 +13,11 @@ In `/etc/NetworkManager/conf.d/unmanaged.conf`,
 [keyfile]
 unmanaged-devices=interface-name:wlan0
 ```
+
+That solves most of the log spam. But plasma (either plasmashell or systemsettings) keeps writing "Wireless scan on "wlan0" failed: "Scanning not allowed while unavailable"". Deleting wlan0 from the System Settings > Networking interface does nothing. Deleting ~/.chache/systemsettings fixes the issue (solution found on this [old bug report](https://github.com/NixOS/nixpkgs/issues/125545#issuecomment-906809973)).
+
 ### TODO
 - See on next reboot
 - If that still works, undo all previously attempted changes; and see if that still works
 - If it does implement an automatized solution ("unignore" wlan0 on eth unplug, "reignore" on plug)
+- Check: was deleting wlan0 from the System Settings necessary? (that makes seamlessly ignoring/unignoring it more difficult)
